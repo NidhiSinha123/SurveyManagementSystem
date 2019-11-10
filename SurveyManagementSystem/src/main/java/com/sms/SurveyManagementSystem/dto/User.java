@@ -14,6 +14,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import org.hibernate.validator.constraints.CodePointLength;
 @Entity
 public class User {
 	
@@ -47,13 +49,19 @@ public class User {
 	@Column(name="is_deleted")
 	private boolean isDeleted;
 	
+	@Column(name="is_assigned")
+	private boolean isAssigned;
+	
+	@Column(name="status")
+	private String status;
+	
 	public User()
 	{
 		
 	}
 
 	public User(BigInteger userId, String userName, String userEmail, String userGender, String userContactNo,
-			String userRole, Integer userAge, Survey survey, boolean isDeleted) {
+			String userRole, Integer userAge, Survey survey, boolean isDeleted, boolean isAssigned, String status) {
 		super();
 		this.userId = userId;
 		this.userName = userName;
@@ -64,6 +72,8 @@ public class User {
 		this.userAge = userAge;
 		this.survey = survey;
 		this.isDeleted = isDeleted;
+		this.isAssigned = isAssigned;
+		this.status = status;
 	}
 
 	public BigInteger getUserId() {
@@ -138,11 +148,29 @@ public class User {
 		this.isDeleted = isDeleted;
 	}
 
+	public boolean isAssigned() {
+		return isAssigned;
+	}
+
+	public void setAssigned(boolean isAssigned) {
+		this.isAssigned = isAssigned;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + (isAssigned ? 1231 : 1237);
 		result = prime * result + (isDeleted ? 1231 : 1237);
+		result = prime * result + ((status == null) ? 0 : status.hashCode());
 		result = prime * result + ((survey == null) ? 0 : survey.hashCode());
 		result = prime * result + ((userAge == null) ? 0 : userAge.hashCode());
 		result = prime * result + ((userContactNo == null) ? 0 : userContactNo.hashCode());
@@ -163,7 +191,14 @@ public class User {
 		if (getClass() != obj.getClass())
 			return false;
 		User other = (User) obj;
+		if (isAssigned != other.isAssigned)
+			return false;
 		if (isDeleted != other.isDeleted)
+			return false;
+		if (status == null) {
+			if (other.status != null)
+				return false;
+		} else if (!status.equals(other.status))
 			return false;
 		if (survey == null) {
 			if (other.survey != null)
@@ -212,10 +247,9 @@ public class User {
 	public String toString() {
 		return "User [userId=" + userId + ", userName=" + userName + ", userEmail=" + userEmail + ", userGender="
 				+ userGender + ", userContactNo=" + userContactNo + ", userRole=" + userRole + ", userAge=" + userAge
-				+ ", survey=" + survey + ", isDeleted=" + isDeleted + "]";
+				+ ", survey=" + survey + ", isDeleted=" + isDeleted + ", isAssigned=" + isAssigned + ", status="
+				+ status + "]";
 	}
 
 	
-	
-
 }

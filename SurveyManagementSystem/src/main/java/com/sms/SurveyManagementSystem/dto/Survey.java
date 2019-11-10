@@ -33,7 +33,7 @@ public class Survey {
 	private String surveyType;
 	
 	@OneToMany(mappedBy = "survey")
-	private Set<Questions> listOfQuestions;
+	private List<Questions> listOfQuestions;
 	
 	@Column(name="is_deleted")
 	private boolean isDeleted;
@@ -49,7 +49,7 @@ public class Survey {
 
 
 	public Survey(BigInteger surveyId, String surveyName, String surveyDescription, String surveyType,
-			Set<Questions> listOfQuestions, boolean isDeleted, List<User> userList) {
+			List<Questions> listOfQuestions, boolean isDeleted, List<User> userList) {
 		super();
 		this.surveyId = surveyId;
 		this.surveyName = surveyName;
@@ -101,12 +101,12 @@ public class Survey {
 	}
 
 
-	public Set<Questions> getListOfQuestions() {
+	public List<Questions> getListOfQuestions() {
 		return listOfQuestions;
 	}
 
 
-	public void setListOfQuestions(Set<Questions> listOfQuestions) {
+	public void setListOfQuestions(List<Questions> listOfQuestions) {
 		this.listOfQuestions = listOfQuestions;
 	}
 

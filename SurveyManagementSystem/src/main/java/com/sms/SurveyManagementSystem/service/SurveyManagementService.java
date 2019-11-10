@@ -16,7 +16,6 @@ public interface SurveyManagementService {
 	public Questions addQuestion(BigInteger surveyId,Questions question) throws UserException;
 	public boolean deleteQuestion(BigInteger surveyId,BigInteger questionId)throws UserException;
 	public Questions updateQuestion(BigInteger surveyId,BigInteger questionId,Questions question)throws UserException;
-	public Questions searchQuestion(BigInteger questionId)throws UserException;
 	public boolean distributeSurvey(BigInteger userId,BigInteger surveyId)throws UserException;
 	public List<User> viewNoOfRespondents(String surveyId);
 	public List<User> viewPendingSurvey(String surveyId);
@@ -24,8 +23,11 @@ public interface SurveyManagementService {
 	public User register(User user)throws UserException;
 	public List<Survey> findAssignedSurvey(BigInteger userId) throws UserException;
 	public BigInteger validateQuestionId(String questionId,List<Questions> questionList)throws UserException;
-	public List<Questions> getQuestionList() throws UserException;
-	
+	public List<Questions> getQuestionList(BigInteger surveyId) throws UserException;
+	public Survey searchSurvey(BigInteger surveyId)throws UserException;
+	public Questions searchQuestion(BigInteger questionId)throws UserException;
+	public List<User> getUserList() throws UserException;
+	public List<User> getUser(BigInteger surveyId)throws UserException;
 	
 	
 }

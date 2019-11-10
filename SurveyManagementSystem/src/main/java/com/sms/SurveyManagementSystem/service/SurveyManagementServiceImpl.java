@@ -1,12 +1,12 @@
 package com.sms.SurveyManagementSystem.service;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-import javax.transaction.Transactional;
+import java.util.Optional;
 
-import org.aspectj.weaver.patterns.TypePatternQuestions.Question;
+import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.sms.SurveyManagementSystem.dto.Questions;
@@ -55,6 +55,7 @@ public class SurveyManagementServiceImpl implements SurveyManagementService{
 	  listOfUser.add(user);
 	  survey.setUserList(listOfUser);
 	  user.setSurvey(survey);
+	  user.setAssigned(true);
 	  surveyrepository.save(survey);
 	  userrepository.save(user);
 	  
@@ -112,7 +113,22 @@ public class SurveyManagementServiceImpl implements SurveyManagementService{
 	@Override
 	public List<Survey> getSurveyList() throws UserException {
 		// TODO Auto-generated method stub
-		return surveyrepository.findAll();
+		List<Survey> surveyList=new ArrayList<Survey>();
+		List<Survey> survey=surveyrepository.findAllNotDeleted();
+		for(Survey s:survey)
+		{
+			if(s.getListOfQuestions()!=null)
+			{
+				Survey newSurvey=new Survey();
+				newSurvey.setSurveyDescription(s.getSurveyDescription());
+				newSurvey.setSurveyId(s.getSurveyId());
+				newSurvey.setSurveyName(s.getSurveyName());
+				newSurvey.setSurveyType(s.getSurveyType());
+				surveyList.add(newSurvey);
+			}
+			
+		}
+		return surveyList;
 	}
 	
 	public List<Questions> getQuestionList() throws UserException
@@ -185,26 +201,9 @@ public class SurveyManagementServiceImpl implements SurveyManagementService{
 		Survey survey=surveyrepository.findById(surveyId).get();
 		if(survey!=null)
 		{
-			
-			//System.out.println(question);
-			
-			//question.setSurvey(survey);
-			Set<Questions> questionList=survey.getListOfQuestions();
-			
-			
-			System.out.println(survey.getListOfQuestions());
-			Questions newquestion=new Questions();
-			newquestion.setAnswer(question.getAnswer());
-			newquestion.setChosenOptions(question.getChosenOptions());
-			newquestion.setDeleted(false);
-			newquestion.setQuestionDescription(question.getQuestionDescription());
-			newquestion.setQuestionNumber(question.getQuestionNumber());
-			newquestion.setQuestionOptions(question.getQuestionOptions());
-			newquestion.setQuestionTitle(question.getQuestionTitle());
-			newquestion.setQuestionType(question.getQuestionType());
-			newquestion.setSurvey(survey);
-			questionrepository.save(newquestion);
-			questionList.add(newquestion);
+			questionrepository.save(question);
+			List<Questions> questionList=survey.getListOfQuestions();
+			questionList.add(question);
 			survey.setListOfQuestions(questionList);
 			surveyrepository.save(survey);
 		}
@@ -231,8 +230,13 @@ public class SurveyManagementServiceImpl implements SurveyManagementService{
 		question.setDeleted(true);
 		//survey.getListOfQuestions().remove(question);
 		questionrepository.save(question);
-		//surveyrepository.save(survey);
+		survey.getListOfQuestions().remove(question);
+		List<Questions> listOfQuestions=survey.getListOfQuestions();
+		survey.setListOfQuestions(listOfQuestions);
+		surveyrepository.save(survey);
 		return true;
+		
+		
 		
 	}
 
@@ -243,19 +247,15 @@ public class SurveyManagementServiceImpl implements SurveyManagementService{
 		Survey survey=surveyrepository.findById(surveyId).get();
 		if(survey==null)
 			throw new UserException("Survey not found");
-		Set<Questions> listOfQuestions=survey.getListOfQuestions();
+		List<Questions> listOfQuestions=survey.getListOfQuestions();
 		Questions temp=questionrepository.findById(questionId).get();
 		if(temp!=null && listOfQuestions.contains(temp))
 		{
 			listOfQuestions.remove(temp);
-			temp.setAnswer(question.getAnswer());
-			temp.setChosenOptions(question.getChosenOptions());
 			temp.setDeleted(question.isDeleted());
 			temp.setQuestionDescription(question.getQuestionDescription());
 			temp.setQuestionId(question.getQuestionId());
-			temp.setQuestionNumber(question.getQuestionNumber());
 			temp.setQuestionOptions(question.getQuestionOptions());
-			temp.setQuestionTitle(question.getQuestionTitle());
 			temp.setQuestionType(question.getQuestionType());
 			temp.setSurvey(question.getSurvey());
 			listOfQuestions.add(temp);
@@ -271,7 +271,7 @@ public class SurveyManagementServiceImpl implements SurveyManagementService{
 	public Questions searchQuestion(BigInteger questionId) throws UserException {
 		// TODO Auto-generated method stub
 		Questions question=questionrepository.findById(questionId).get();
-		if(question==null)
+		if(question==null && question.isDeleted()!=true)
 		{
 			throw new UserException("question with questionId"+questionId+"not present");
 		}
@@ -298,6 +298,79 @@ public class SurveyManagementServiceImpl implements SurveyManagementService{
 	public List<Survey> findAssignedSurvey(BigInteger userId) throws UserException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+
+	@Override
+	public Survey searchSurvey(BigInteger surveyId) throws UserException {
+		// TODO Auto-generated method stub
+		Survey searchedSurvey=surveyrepository.findById(surveyId).get();
+		if(searchedSurvey!=null)
+		{
+			return searchedSurvey;
+		}
+		 throw new UserException("No survey found");
+	}
+
+
+	@Override
+	public List<Questions> getQuestionList(BigInteger surveyId) throws UserException {
+		// TODO Auto-generated method stub
+		List<Questions> list=new ArrayList<Questions>();
+		Survey survey=surveyrepository.findById(surveyId).get();
+		List<Questions> questionList=survey.getListOfQuestions();
+		Iterator<Questions> iterator=questionList.iterator();
+		while(iterator.hasNext())
+		{
+			Questions question=iterator.next();
+			if(question.isDeleted()==false)
+			{
+				list.add(question);
+			}
+			
+		}
+		return list;
+	}
+
+
+	@Override
+	public List<User> getUserList() throws UserException {
+		// TODO Auto-generated method stub
+		List<User> user=userrepository.findAll();
+		List<User> userList=new ArrayList<User>();
+		Iterator<User> iterator = user.iterator();
+		while(iterator.hasNext())
+		{
+			User newUser=iterator.next();
+			if(newUser.isDeleted()==false && newUser.isAssigned()==false)
+			{
+				userList.add(newUser);
+			}
+		}
+		return userList;
+	}
+
+
+	@Override
+	public List<User> getUser(BigInteger surveyId) throws UserException {
+		// TODO Auto-generated method stub
+		List<User> user=userrepository.findAll();
+		List<User> userList=new ArrayList<User>();
+		Iterator<User> iterator = user.iterator();
+		while(iterator.hasNext())
+		{
+			
+			User newUser=iterator.next();
+			//System.out.println(newUser.getSurvey().getSurveyId());
+			//System.out.println(newUser.getSurvey().getSurveyId().equals(surveyId));
+			if(newUser.isDeleted()==false && newUser.getSurvey().getSurveyId().equals(surveyId))
+			{
+				userList.add(newUser);
+				//System.out.println(userList.size());
+			}
+		}
+		//System.out.println(userList);
+		return userList;
 	}
 
 
