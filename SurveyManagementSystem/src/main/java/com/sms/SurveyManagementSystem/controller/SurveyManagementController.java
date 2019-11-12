@@ -26,7 +26,12 @@ import com.sms.SurveyManagementSystem.dto.Survey;
 import com.sms.SurveyManagementSystem.dto.User;
 import com.sms.SurveyManagementSystem.exception.UserException;
 import com.sms.SurveyManagementSystem.service.SurveyManagementService;
-
+/*
+ * Author:  Nidhi
+ * Description:Controller
+ * Created on: November 11, 2019
+ * 
+ */
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
 public class SurveyManagementController {
@@ -34,6 +39,13 @@ public class SurveyManagementController {
 	@Autowired
 	SurveyManagementService service;
 	
+	/*
+	 * Author: 			Nidhi
+	 * Description: 	Add survey 
+	 * Created on: 		November 11, 2019 
+	 * Input: 			Survey survey
+	 * Output: 			survey
+	 */ 	
 @PostMapping(value="/addsurvey")
 public ResponseEntity<?> addSurvey(@RequestBody Survey survey)
 {
@@ -58,7 +70,13 @@ public ResponseEntity<?> addSurvey(@RequestBody Survey survey)
 	return new ResponseEntity<Survey>(newSurvey,HttpStatus.OK);
 	
 }
-
+/*
+ * Author: 			Nidhi
+ * Description: 	Delete survey 
+ * Created on: 		November 11, 2019 
+ * Input: 			String
+ * Output: 			String
+ */ 	
 @DeleteMapping(value="/deleteSurvey")
 public ResponseEntity<?> deleteSurvey(@RequestParam("surveyId")String id) throws UserException
 {
@@ -73,6 +91,13 @@ public ResponseEntity<?> deleteSurvey(@RequestParam("surveyId")String id) throws
 		return new ResponseEntity<String>("not deleted",HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 }
+/*
+ * Author: 			Nidhi
+ * Description: 	Update the details of survey 
+ * Created on: 		November 11, 2019 
+ * Input: 			Survey survey
+ * Output: 			Survey
+ */ 	
 
 @PutMapping(value="/updateSurvey")
 public ResponseEntity<?> updateSurvey(@RequestBody Survey survey) throws UserException
@@ -87,6 +112,13 @@ public ResponseEntity<?> updateSurvey(@RequestBody Survey survey) throws UserExc
 		return new ResponseEntity<String>("not updated",HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 }
+/*
+ * Author: 			Nidhi
+ * Description: 	Register user 
+ * Created on: 		November 11, 2019 
+ * Input: 			User user
+ * Output: 			User
+ */ 	
 @PostMapping(value="/register")
 public ResponseEntity<?> registerUser(@RequestBody User user)
 {
@@ -95,6 +127,7 @@ public ResponseEntity<?> registerUser(@RequestBody User user)
 	{
 		newUser.setUserName(user.getUserName());
 		newUser.setDeleted(false);
+		newUser.setUserPassword(user.getUserPassword());
 		newUser.setUserAge(user.getUserAge());
 		newUser.setUserContactNo(user.getUserContactNo());
 		newUser.setUserEmail(user.getUserEmail());
@@ -112,6 +145,13 @@ public ResponseEntity<?> registerUser(@RequestBody User user)
 	return new ResponseEntity<User>(newUser,HttpStatus.OK);
 	
 }
+/*
+ * Author: 			Nidhi
+ * Description: 	Assign survey to the given user
+ * Created on: 		November 11, 2019 
+ * Input: 			BigInteger userId,BigInteger surveyId
+ * Output: 			String
+ */ 	
 	
 	  @PostMapping(value="/assignSurvey") 
 	  public ResponseEntity<?>assignSurvey(@RequestParam BigInteger userId,@RequestParam BigInteger surveyId) throws UserException { 
@@ -129,7 +169,13 @@ public ResponseEntity<?> registerUser(@RequestBody User user)
 		  return new ResponseEntity<String>("Survey not assigned",HttpStatus.INTERNAL_SERVER_ERROR);
 	  } 
 	  }
-	  
+	  /*
+		 * Author: 			Nidhi
+		 * Description: 	Returns list of survey
+		 * Created on: 		November 11, 2019 
+		 * Input: 			
+		 * Output: 			ResponseEntity
+		 */ 	
 	  @GetMapping(value="/getSurveyList")
 	  public ResponseEntity<?> getListOfSurvey() throws UserException
 	  {
@@ -139,6 +185,14 @@ public ResponseEntity<?> registerUser(@RequestBody User user)
 		  else
 			  return new ResponseEntity<String>("list is not present",HttpStatus.INTERNAL_SERVER_ERROR);
 	  }
+	  
+	  /*
+		 * Author: 			Nidhi
+		 * Description: 	Add question in the given survey 
+		 * Created on: 		November 11, 2019 
+		 * Input: 			BigInteger surveyId,Question question
+		 * Output: 			string
+		 */ 	 
 	  
 	  @PostMapping(value="/addquestion")
 	  public ResponseEntity<?> addQuestion(@RequestParam("surveyId")BigInteger surveyId,@RequestBody Questions question) throws UserException
@@ -167,6 +221,13 @@ public ResponseEntity<?> registerUser(@RequestBody User user)
 
 		  
 	  }
+	  /*
+		 * Author: 			Nidhi
+		 * Description: 	Deletes question from the given survey
+		 * Created on: 		November 11, 2019 
+		 * Input: 			BigInteger id
+		 * Output: 			String
+		 */ 	
 	  @DeleteMapping(value="/deletequestion")
 	  public ResponseEntity<?> deleteQuestion(@RequestParam("questionId") BigInteger id)
 	  {
@@ -181,15 +242,23 @@ public ResponseEntity<?> registerUser(@RequestBody User user)
 			}
 			return new ResponseEntity<String>("Question deleted successfully!", HttpStatus.OK);
 	  }
+	  /*
+		 * Author: 			Nidhi
+		 * Description: 	Returns list of questions of the given surveyId 
+		 * Created on: 		November 11, 2019 
+		 * Input: 			surveyId
+		 * Output: 			List
+		 */ 	
 	  
 	  @GetMapping(value="/getquestion")
-	  public ResponseEntity<?> getQuestion(@RequestParam("surveyId") BigInteger id) throws UserException
+	  public ResponseEntity<?> getQuestion(@RequestParam("surveyId") String surveyId) throws UserException
 	  {
 		 // List<Questions> listOfQuestion=service.getQuestionList(id);
 		 // if(listOfQuestion.size()!=0)
 		 // return new ResponseEntity<List>(listOfQuestion,HttpStatus.OK);
 		 // else
 		//	  return new ResponseEntity<String>("list is not present",HttpStatus.INTERNAL_SERVER_ERROR);
+		  BigInteger id=new BigInteger(surveyId);
 		  List<Questions> listOfQuestion=service.getQuestionList(id);
 			 if(listOfQuestion.size()!=0)
 			 {
@@ -206,6 +275,12 @@ public ResponseEntity<?> registerUser(@RequestBody User user)
 				 return new ResponseEntity<String>("list is not present",HttpStatus.INTERNAL_SERVER_ERROR);
 			 }
 	  }
+	  /*
+		 * Author: 			Nidhi
+		 * Description: 	Returns list of users
+		 * Created on: 		November 11, 2019 
+		 * Output: 			List
+		 */ 	
 	  @GetMapping(value="/getUserList")
 	  public ResponseEntity<?> getUserList() throws UserException
 	  {
@@ -226,12 +301,20 @@ public ResponseEntity<?> registerUser(@RequestBody User user)
 		 }
 		  
 	  }
+	  /*
+		 * Author: 			Nidhi
+		 * Description: 	Lists all the user of the given assigned survey
+		 * Created on: 		November 11, 2019 
+		 * Input: 			String
+		 * Output: 			List of users
+		 */ 	
 	  @GetMapping(value="/getUser")
 	  public ResponseEntity<?> getUser(@RequestParam("surveyId")String sId) throws UserException
 	  {
-		  //System.out.println(sId);
-		  BigInteger surveyId=service.validateSurveyId(sId, service.getSurveyList());
+		  System.out.println(sId);
+		 BigInteger surveyId=service.validateSurveyId(sId, service.getSurveyList());
 		  List<User> listOfUser=service.getUser(surveyId);
+		  
 		 if(listOfUser.size()!=0)
 		 {
 			 List<User> users = new ArrayList<User>();
@@ -248,7 +331,49 @@ public ResponseEntity<?> registerUser(@RequestBody User user)
 		 }
 		  
 	  }
+	  /*
+		 * Author: 			Nidhi
+		 * Description: 	Returns survey of the given user 
+		 * Created on: 		November 11, 2019 
+		 * Input: 			String
+		 * Output: 			Survey
+		 */ 	
+	  @SuppressWarnings("unused")
+	  @GetMapping(value="/getSurveyId")
+	  public ResponseEntity<?> getSurvey(@RequestParam("userId") String uId) throws UserException
+	  {
+		  
+		  BigInteger userId=new BigInteger(uId);
+		  Survey survey=service.getSurveyByUserId(userId);
+		  survey.setListOfQuestions(null);
+		  survey.setUserList(null);
+		 // String sid=surveyId.toString();
+		  //System.out.println(sid);
+		  if(survey!=null)
+		  {
+			  return new ResponseEntity<Survey>(survey,HttpStatus.OK);
+		  }
+		  else
+		  {
+			  return new ResponseEntity<String>("No user found",HttpStatus.INTERNAL_SERVER_ERROR);
+		  }
+			  
+	  }
 	  
+	  @PostMapping(value="submitSurvey")
+	  public ResponseEntity<?> submitSurvey(@RequestParam("userId") String uId) throws UserException
+	  {
+		  BigInteger userId=new BigInteger(uId);
+		  boolean status=service.submitSurvey(userId);
+		  if(status)
+		  {
+			  return new ResponseEntity<String>("submitted successfully",HttpStatus.OK);
+		  }
+		  else
+		  {
+			  return new ResponseEntity<String>("not submitted",HttpStatus.INTERNAL_SERVER_ERROR);
+		  }
+	  }
 	  
 	  
 	

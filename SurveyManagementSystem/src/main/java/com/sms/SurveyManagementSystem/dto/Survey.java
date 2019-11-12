@@ -2,11 +2,13 @@ package com.sms.SurveyManagementSystem.dto;
 
 
 import java.math.BigInteger;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,8 +16,26 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+/*
+ * Author:  Nidhi
+ * Description:DTO
+ * Created on: November 11, 2019
+ * 
+ */
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class Survey {
 
 	@Id
@@ -32,15 +52,29 @@ public class Survey {
 	@Column(name="survey_type")
 	private String surveyType;
 	
+	@JsonIgnore
 	@OneToMany(mappedBy = "survey")
 	private List<Questions> listOfQuestions;
 	
 	@Column(name="is_deleted")
 	private boolean isDeleted;
 	
+	@JsonIgnore
 	@OneToMany(mappedBy="survey")
 	private List<User> userList;
 	
+	@CreatedBy
+	protected String createdBy;
+	
+	@CreatedDate	
+	@Temporal(TemporalType.TIMESTAMP)
+	protected Date creationDate;
+	
+	@LastModifiedBy
+	protected String lastModifiedBy;
+	
+	@LastModifiedDate
+	protected String lastModifiedDate;
 	
 	public Survey()
 	{
@@ -128,6 +162,47 @@ public class Survey {
 
 	public void setUserList(List<User> userList) {
 		this.userList = userList;
+	}
+	
+
+
+	public String getCreatedBy() {
+		return createdBy;
+	}
+
+
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
+	}
+
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+
+	public String getLastModifiedBy() {
+		return lastModifiedBy;
+	}
+
+
+	public void setLastModifiedBy(String lastModifiedBy) {
+		this.lastModifiedBy = lastModifiedBy;
+	}
+
+
+	public String getLastModifiedDate() {
+		return lastModifiedDate;
+	}
+
+
+	public void setLastModifiedDate(String lastModifiedDate) {
+		this.lastModifiedDate = lastModifiedDate;
 	}
 
 

@@ -28,6 +28,9 @@ public interface SurveyManagementService {
 	public Questions searchQuestion(BigInteger questionId)throws UserException;
 	public List<User> getUserList() throws UserException;
 	public List<User> getUser(BigInteger surveyId)throws UserException;
+	public BigInteger getSurveyId(BigInteger userId)throws UserException;
+	public Survey getSurveyByUserId(BigInteger userId)throws UserException;
+	public boolean submitSurvey(BigInteger userId)throws UserException;
 	
 	
 }

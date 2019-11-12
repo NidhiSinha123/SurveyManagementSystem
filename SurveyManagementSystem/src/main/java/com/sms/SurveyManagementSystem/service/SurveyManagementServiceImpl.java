@@ -1,11 +1,9 @@
 package com.sms.SurveyManagementSystem.service;
-
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,8 +14,14 @@ import com.sms.SurveyManagementSystem.exception.UserException;
 import com.sms.SurveyManagementSystem.repository.QuestionRepository;
 import com.sms.SurveyManagementSystem.repository.SurveyRepository;
 import com.sms.SurveyManagementSystem.repository.UserRepository;
-
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+/*
+ * Author:  Nidhi
+ * Description: SurveyManagementServiceImpl
+ * Created on: November 11, 2019
+ * 
+ */
 @Service
 @Transactional
 
@@ -33,14 +37,23 @@ public class SurveyManagementServiceImpl implements SurveyManagementService{
 	@Autowired
 	UserRepository userrepository;
 	
-
+	private static final Logger logger = LoggerFactory.getLogger(SurveyManagementServiceImpl.class);
+	
+	/*
+	 * Author: Nidhi 
+	 * Description:Assign survey to the user
+	 * Created on: November 9, 2019
+	 */
 	
 	  @Override 
 	  public boolean distributeSurvey(BigInteger userId, BigInteger surveyId) throws UserException
 	  {
 		  // TODO Auto-generated method stub 
+	  logger.info("inside distributesurvey");	  
 	  User user=userrepository.findById(userId).get();
+	  logger.info("finding survey by surveyId");	  
 	  Survey survey=surveyrepository.findById(surveyId).get(); 
+	  logger.info("Checking if the user is null or not");	  
 	  if(user==null) {
 		 throw new UserException("Userid not found"); }
 	  if(user.getUserRole().equals("ROLE_ADMIN") && user.getUserRole().equals("ROLE_SURVEYOR")) 
@@ -51,6 +64,7 @@ public class SurveyManagementServiceImpl implements SurveyManagementService{
 		  throw new UserException("SurveyId not present");
 		
 	  }
+	  logger.info("list all the user");	  
 	  List<User> listOfUser=survey.getUserList();
 	  listOfUser.add(user);
 	  survey.setUserList(listOfUser);
@@ -62,24 +76,19 @@ public class SurveyManagementServiceImpl implements SurveyManagementService{
 	  return true;
 	  }
 	 	
-
-	@Override
-	public List<User> viewNoOfRespondents(String surveyId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<User> viewPendingSurvey(String surveyId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	  /*
+		 * Author: Nidhi 
+		 * Description:Create survey 
+		 * Created on: November 9, 2019
+		 */
+	
 	
 	@Override
 	public Survey createSurvey(Survey survey) throws UserException  {
 		// TODO Auto-generated method stub
+		logger.info("inside create survey");	  
 		Survey newSurvey=surveyrepository.save(survey);
+		logger.info("Checking if the survey is null or not");	  
 		if(newSurvey == null)
 		{
 			throw new UserException("Survey is not added");
@@ -88,11 +97,18 @@ public class SurveyManagementServiceImpl implements SurveyManagementService{
 	}
 
 
+	
+	  /*
+		 * Author: Nidhi 
+		 * Description:Update survey 
+		 * Created on: November 9, 2019
+		 */
 	@Override
 	public Survey updateSurvey(BigInteger surveyId,Survey survey) throws UserException {
 		// TODO Auto-generated method stub
-		
+		logger.info("inside update survey");	  
 		Survey newSurvey=surveyrepository.findById(surveyId).get();
+		logger.info("checking if the survey is null or not");	  
 		if(newSurvey!=null)
 		{
 			newSurvey.setSurveyId(surveyId);
@@ -109,11 +125,18 @@ public class SurveyManagementServiceImpl implements SurveyManagementService{
 		
 	}
 	
+	 /*
+	 * Author: Nidhi 
+	 * Description:Returns list of survey
+	 * Created on: November 9, 2019
+	 */
 
 	@Override
 	public List<Survey> getSurveyList() throws UserException {
 		// TODO Auto-generated method stub
+		logger.info("inside getSurveyList");		  
 		List<Survey> surveyList=new ArrayList<Survey>();
+		logger.info("find all the not deleted survey");	
 		List<Survey> survey=surveyrepository.findAllNotDeleted();
 		for(Survey s:survey)
 		{
@@ -131,14 +154,24 @@ public class SurveyManagementServiceImpl implements SurveyManagementService{
 		return surveyList;
 	}
 	
+	 /*
+	 * Author: Nidhi 
+	 * Description:Returns list of question 
+	 * Created on: November 9, 2019
+	 */
 	public List<Questions> getQuestionList() throws UserException
 	{
+		logger.info("find list of all the questions");	
 		return questionrepository.findAll();
 	}
+	
+	
 
 	@Override
 	public BigInteger validateSurveyId(String surveyId, List<Survey> surveyList) throws UserException {
 		// TODO Auto-generated method stub
+		logger.info("inside validate surveyId");	
+		logger.info("Validating the surveyId");	
 		if (surveyId.matches("^[0-9]+")) {
 			Iterator<Survey> surveyIterator = surveyList.iterator();
 			while (surveyIterator.hasNext()) {
@@ -156,6 +189,8 @@ public class SurveyManagementServiceImpl implements SurveyManagementService{
 	
 	public BigInteger validateQuestionId(String questionId,List<Questions> questionList)throws UserException
 	{
+		logger.info("inside validate questionId");	
+		logger.info("Validating the question Id");	
 		if(questionId.matches("^[0-9]+"))
 		{
 			Iterator<Questions> questionIterator=questionList.iterator();
@@ -171,9 +206,16 @@ public class SurveyManagementServiceImpl implements SurveyManagementService{
 		throw new UserException("QuestionId not found");
 	}
 
+	 /*
+	 * Author: Nidhi 
+	 * Description:Remove survey 
+	 * Created on: November 9, 2019
+	 */
 	@Override
 	public boolean removeSurvey(BigInteger surveyId) throws UserException {
 		// TODO Auto-generated method stub
+		logger.info("inside remove survey");	
+		logger.info("finding survey by id");	
 		Survey newSurvey=surveyrepository.findById(surveyId).get();
 		if(newSurvey==null)
 		{
@@ -184,6 +226,11 @@ public class SurveyManagementServiceImpl implements SurveyManagementService{
 		
 	}
 
+	 /*
+	 * Author: Nidhi 
+	 * Description:Search survey by id 
+	 * Created on: November 9, 2019
+	 */
 	@Override
 	public Survey searchSurveyById(BigInteger surveyId) throws UserException {
 		// TODO Auto-generated method stub
@@ -195,6 +242,12 @@ public class SurveyManagementServiceImpl implements SurveyManagementService{
 		return survey;
 	}
 
+	 /*
+	 * Author: Nidhi 
+	 * Description:Add question in the given survey
+	 * Created on: November 9, 2019
+	 */
+	
 	@Override
 	public Questions addQuestion(BigInteger surveyId, Questions question) throws UserException {
 		// TODO Auto-generated method stub
@@ -214,6 +267,11 @@ public class SurveyManagementServiceImpl implements SurveyManagementService{
 		return question;
 	}
 
+	 /*
+	 * Author: Nidhi 
+	 * Description:Delete question of the given survey 
+	 * Created on: November 9, 2019
+	 */
 	@Override
 	public boolean deleteQuestion(BigInteger surveyId, BigInteger questionId) throws UserException {
 		// TODO Auto-generated method stub
@@ -239,6 +297,12 @@ public class SurveyManagementServiceImpl implements SurveyManagementService{
 		
 		
 	}
+	
+	 /*
+	 * Author: Nidhi 
+	 * Description:Update question of the given survey 
+	 * Created on: November 9, 2019
+	 */
 
 	@Override
 	public Questions updateQuestion(BigInteger surveyId, BigInteger questionId, Questions question)
@@ -267,6 +331,11 @@ public class SurveyManagementServiceImpl implements SurveyManagementService{
 		return question;
 	}
 
+	 /*
+	 * Author: Nidhi 
+	 * Description:Search question by question id
+	 * Created on: November 9, 2019
+	 */
 	@Override
 	public Questions searchQuestion(BigInteger questionId) throws UserException {
 		// TODO Auto-generated method stub
@@ -279,7 +348,11 @@ public class SurveyManagementServiceImpl implements SurveyManagementService{
 		
 	}
 
-
+	 /*
+	 * Author: Nidhi 
+	 * Description:Register users
+	 * Created on: November 9, 2019
+	 */
 
 	@Override
 	public User register(User user) throws UserException {
@@ -354,23 +427,69 @@ public class SurveyManagementServiceImpl implements SurveyManagementService{
 	@Override
 	public List<User> getUser(BigInteger surveyId) throws UserException {
 		// TODO Auto-generated method stub
+		System.out.println(1);
 		List<User> user=userrepository.findAll();
 		List<User> userList=new ArrayList<User>();
 		Iterator<User> iterator = user.iterator();
+		System.out.println(2);
 		while(iterator.hasNext())
 		{
 			
 			User newUser=iterator.next();
-			//System.out.println(newUser.getSurvey().getSurveyId());
-			//System.out.println(newUser.getSurvey().getSurveyId().equals(surveyId));
-			if(newUser.isDeleted()==false && newUser.getSurvey().getSurveyId().equals(surveyId))
+			System.out.println(newUser.getSurvey().getSurveyId());
+			System.out.println(newUser.getSurvey().getSurveyId().equals(surveyId));
+			System.out.println(newUser.isDeleted()==false && newUser.getSurvey().getSurveyId()==BigInteger.valueOf(4));
+			if(newUser.isDeleted()==false && newUser.getSurvey().getSurveyId()==surveyId)
 			{
 				userList.add(newUser);
-				//System.out.println(userList.size());
+				System.out.println(userList.size());
 			}
 		}
-		//System.out.println(userList);
+		System.out.println(userList);
 		return userList;
+	}
+
+
+	@Override
+	public BigInteger getSurveyId(BigInteger userId) throws UserException {
+		// TODO Auto-generated method stub
+		User user=userrepository.findById(userId).get();
+		BigInteger surveyId=user.getSurvey().getSurveyId();
+		return surveyId;
+	}
+
+
+	@Override
+	public Survey getSurveyByUserId(BigInteger userId) throws UserException {
+		// TODO Auto-generated method stub
+		User user=userrepository.findById(userId).get();
+		 Survey survey=user.getSurvey();
+		return survey;
+	}
+
+
+	@Override
+	public boolean submitSurvey(BigInteger userId) throws UserException {
+		// TODO Auto-generated method stub
+		if(userId!=null)
+		{
+			User user=userrepository.findById(userId).get();
+			user.setStatus("Responded");
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public List<User> viewNoOfRespondents(String surveyId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<User> viewPendingSurvey(String surveyId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

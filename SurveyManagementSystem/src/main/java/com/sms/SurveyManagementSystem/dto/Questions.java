@@ -2,10 +2,12 @@ package com.sms.SurveyManagementSystem.dto;
 
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -13,8 +15,24 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+/*
+ * Author:  Nidhi
+ * Description:DTO
+ * Created on: November 11, 2019
+ * 
+ */
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class Questions {
 
 	@Id
@@ -50,6 +68,19 @@ public class Questions {
 	
  	@Column(name="question_isDeleted")
  	private boolean isDeleted;
+ 	
+ 	@CreatedBy
+	protected String createdBy;
+	
+	@CreatedDate	
+	@Temporal(TemporalType.TIMESTAMP)
+	protected Date creationDate;
+	
+	@LastModifiedBy
+	protected String lastModifiedBy;
+	
+	@LastModifiedDate
+	protected String lastModifiedDate;
 	
 	public Questions()
 	{
@@ -115,65 +146,37 @@ public class Questions {
 		this.isDeleted = isDeleted;
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + (isDeleted ? 1231 : 1237);
-		result = prime * result + ((questionDescription == null) ? 0 : questionDescription.hashCode());
-		result = prime * result + ((questionId == null) ? 0 : questionId.hashCode());
-		result = prime * result + ((questionOptions == null) ? 0 : questionOptions.hashCode());
-		result = prime * result + ((questionType == null) ? 0 : questionType.hashCode());
-		result = prime * result + ((survey == null) ? 0 : survey.hashCode());
-		return result;
+	public String getCreatedBy() {
+		return createdBy;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Questions other = (Questions) obj;
-		if (isDeleted != other.isDeleted)
-			return false;
-		if (questionDescription == null) {
-			if (other.questionDescription != null)
-				return false;
-		} else if (!questionDescription.equals(other.questionDescription))
-			return false;
-		if (questionId == null) {
-			if (other.questionId != null)
-				return false;
-		} else if (!questionId.equals(other.questionId))
-			return false;
-		if (questionOptions == null) {
-			if (other.questionOptions != null)
-				return false;
-		} else if (!questionOptions.equals(other.questionOptions))
-			return false;
-		if (questionType == null) {
-			if (other.questionType != null)
-				return false;
-		} else if (!questionType.equals(other.questionType))
-			return false;
-		if (survey == null) {
-			if (other.survey != null)
-				return false;
-		} else if (!survey.equals(other.survey))
-			return false;
-		return true;
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
 	}
 
-	@Override
-	public String toString() {
-		return "Questions [questionId=" + questionId + ", questionDescription=" + questionDescription
-				+ ", questionType=" + questionType + ", questionOptions=" + questionOptions + ", survey=" + survey
-				+ ", isDeleted=" + isDeleted + "]";
+	public Date getCreationDate() {
+		return creationDate;
 	}
 
-	
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public String getLastModifiedBy() {
+		return lastModifiedBy;
+	}
+
+	public void setLastModifiedBy(String lastModifiedBy) {
+		this.lastModifiedBy = lastModifiedBy;
+	}
+
+	public String getLastModifiedDate() {
+		return lastModifiedDate;
+	}
+
+	public void setLastModifiedDate(String lastModifiedDate) {
+		this.lastModifiedDate = lastModifiedDate;
+	}
+
 	
 }

@@ -1,10 +1,12 @@
 package com.sms.SurveyManagementSystem.dto;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,9 +16,24 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.validator.constraints.CodePointLength;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Entity
+@EntityListeners(AuditingEntityListener.class)
+
+/*
+ * Author:  Nidhi
+ * Description:DTO
+ * Created on: November 11, 2019
+ * 
+ */
 public class User {
 	
 	@Id
@@ -29,6 +46,9 @@ public class User {
 	
 	@Column(name="user_email")
 	private String userEmail;
+	
+	@Column(name="user_password")
+	private String userPassword;
 	
 	@Column(name="user_gender")
 	private String userGender;
@@ -55,17 +75,33 @@ public class User {
 	@Column(name="status")
 	private String status;
 	
+	@CreatedBy
+	protected String createdBy;
+	
+	@CreatedDate	
+	@Temporal(TemporalType.TIMESTAMP)
+	protected Date creationDate;
+	
+	@LastModifiedBy
+	protected String lastModifiedBy;
+	
+	@LastModifiedDate
+	protected String lastModifiedDate;
 	public User()
 	{
 		
 	}
 
-	public User(BigInteger userId, String userName, String userEmail, String userGender, String userContactNo,
-			String userRole, Integer userAge, Survey survey, boolean isDeleted, boolean isAssigned, String status) {
+	
+	public User(BigInteger userId, String userName, String userEmail, String userPassword, String userGender,
+			String userContactNo, String userRole, Integer userAge, Survey survey, boolean isDeleted,
+			boolean isAssigned, String status, String createdBy, Date creationDate, String lastModifiedBy,
+			String lastModifiedDate) {
 		super();
 		this.userId = userId;
 		this.userName = userName;
 		this.userEmail = userEmail;
+		this.userPassword = userPassword;
 		this.userGender = userGender;
 		this.userContactNo = userContactNo;
 		this.userRole = userRole;
@@ -74,7 +110,12 @@ public class User {
 		this.isDeleted = isDeleted;
 		this.isAssigned = isAssigned;
 		this.status = status;
+		this.createdBy = createdBy;
+		this.creationDate = creationDate;
+		this.lastModifiedBy = lastModifiedBy;
+		this.lastModifiedDate = lastModifiedDate;
 	}
+
 
 	public BigInteger getUserId() {
 		return userId;
@@ -156,6 +197,9 @@ public class User {
 		this.isAssigned = isAssigned;
 	}
 
+	
+	
+
 	public String getStatus() {
 		return status;
 	}
@@ -163,6 +207,49 @@ public class User {
 	public void setStatus(String status) {
 		this.status = status;
 	}
+
+	public String getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public String getLastModifiedBy() {
+		return lastModifiedBy;
+	}
+
+	public void setLastModifiedBy(String lastModifiedBy) {
+		this.lastModifiedBy = lastModifiedBy;
+	}
+
+	public String getLastModifiedDate() {
+		return lastModifiedDate;
+	}
+
+	public void setLastModifiedDate(String lastModifiedDate) {
+		this.lastModifiedDate = lastModifiedDate;
+	}
+	
+	
+	public String getUserPassword() {
+		return userPassword;
+	}
+
+
+	public void setUserPassword(String userPassword) {
+		this.userPassword = userPassword;
+	}
+
 
 	@Override
 	public int hashCode() {

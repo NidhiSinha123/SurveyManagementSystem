@@ -2,6 +2,12 @@ package com.sms.SurveyManagementSystem.dto;
 
 import java.math.BigInteger;
 
+/*
+ * Author:  Nidhi
+ * Description:DTO
+ * Created on: November 11, 2019
+ * 
+ */
 public class AssignSurvey {
 
 	private BigInteger surveyId;
